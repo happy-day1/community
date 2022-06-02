@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -68,5 +69,19 @@ public class MapperTests {
         int rows = postMapper.selectDiscussPostRows(149);
         System.out.println(rows);
         int a=  (int)Math.pow(2,3);
+    }
+
+    @Test
+    public void test() {
+        List<int[]> l = new ArrayList<int[]>();
+        l.add(new int[] {1,2});
+        int[][] ints = l.toArray(new int[l.size()][2]);
+        System.out.println(Arrays.toString(ints));
+    }
+
+    @Test
+    public void deleteTest() {
+        int i = userMapper.deleteUser(151);
+        System.out.println(i);
     }
 }
