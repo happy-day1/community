@@ -1,12 +1,15 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.util.CommunityUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -94,4 +97,43 @@ public class HelloController {
         emp.put("salary", 8000.00);
         return emp;
     }
+
+
+    @RequestMapping(path = "/cookie/set", method = RequestMethod.GET)
+    @ResponseBody
+    public String setCookie(HttpServletResponse response) {
+        // 创建cookie
+        Cookie cookie = new Cookie("code", CommunityUtil.generateUUID());
+        // 设置cookie的有效范围
+        cookie.setPath("/community/hello");
+        cookie.setMaxAge(600);
+        // 发送cookie
+        response.addCookie(cookie);
+        return "set cookie";
+    }
+
+    @RequestMapping(path = "/cookie/get", method = RequestMethod.GET)
+    @ResponseBody
+    public String getCookie(@CookieValue("code") String code) {
+        return code;
+    }
+
+    @RequestMapping(path = "/session/set", method = RequestMethod.GET)
+    @ResponseBody
+    // Spring mvc中不需要主动创建Session实例,
+    // 当将Session作为一个参数传递给Controller中的方法，spring mvc会自动生成一个session实例作为方法的参数。
+    public String setSession(HttpSession session) {
+        session.setAttribute("id", 1);
+        session.setAttribute("name", "test");
+        return "set session";
+    }
+
+    @RequestMapping(path = "/session/get", method = RequestMethod.GET)
+    @ResponseBody
+    // Spring mvc中不需要主动创建Session实例,
+    // 当将Session作为一个参数传递给Controller中的方法，spring mvc会自动生成一个session实例作为方法的参数。
+    public String getSession(HttpSession session) {
+        return session.getAttribute("id")+ (String) session.getAttribute("name");
+    }
+
 }
