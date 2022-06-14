@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+// 该工具类用于发送用户注册时需要的邮件
 @Component
 public class MailClient {
 

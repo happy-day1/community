@@ -1,11 +1,10 @@
 package com.nowcoder.community.controller;
 
-import com.nowcoder.community.entity.Comment;
-import com.nowcoder.community.entity.DiscussPost;
-import com.nowcoder.community.entity.Page;
-import com.nowcoder.community.entity.User;
+import com.nowcoder.community.entity.*;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
@@ -36,6 +35,12 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private LikeService likeService;
+
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping( path = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title, String content) {
@@ -49,6 +54,13 @@ public class DiscussPostController implements CommunityConstant {
         discussPost.setUserId(user.getId());
         discussPost.setCreateTime(new Date());
         discussPostService.addDiscussPost(discussPost);
+        // 触发发帖事件
+        Event event = new Event().setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(discussPost.getId());
+        eventProducer.fireEvent(event);
+
         // 报错的情况将来统一处理
         return CommunityUtil.getJSONString(0, "发送成功");
     }
@@ -60,6 +72,13 @@ public class DiscussPostController implements CommunityConstant {
         model.addAttribute("post", discussPost);
         User user = userService.findUserById(discussPost.getUserId());
         model.addAttribute("user", user);
+        // 点赞数量
+        long l = likeService.entityLikeCount(ENTITY_TYPE_POST, discussPost.getId());
+        model.addAttribute("likeCount", l);
+        // 点赞状态
+        int entityLikeStatus = (holder.getUser()==null) ? 0 :
+                likeService.findEntityLikeStatus(holder.getUser().getId(), ENTITY_TYPE_POST, discussPost.getId());
+        model.addAttribute("likeStatus", entityLikeStatus);
 
         // 评论信息
         page.setLimit(5);
@@ -77,6 +96,13 @@ public class DiscussPostController implements CommunityConstant {
                 Map<String, Object> commentVo = new HashMap<>();
                 commentVo.put("comment", comment);
                 commentVo.put("user", userService.findUserById(comment.getUserId()));
+                // 点赞
+                l = likeService.entityLikeCount(ENTITY_TYPE_COMMENT, comment.getId());
+                commentVo.put("likeCount", l);
+                // 点赞状态
+                entityLikeStatus = (holder.getUser()==null) ? 0 :
+                        likeService.findEntityLikeStatus(holder.getUser().getId(), ENTITY_TYPE_COMMENT, comment.getId());
+                commentVo.put("likeStatus",entityLikeStatus);
                 // 回复列表
                 List<Comment> replyList = commentService.findCommentsByEntity(
                         ENTITY_TYPE_COMMENT, comment.getId(), 0, Integer.MAX_VALUE);
@@ -90,6 +116,13 @@ public class DiscussPostController implements CommunityConstant {
                         // 回复的目标
                         User target = (reply.getTargetId() == 0) ? null :
                                 userService.findUserById(reply.getTargetId());
+                        l = likeService.entityLikeCount(ENTITY_TYPE_COMMENT, reply.getId());
+                        replyVo.put("likeCount", l);
+                        // 点赞状态
+                        entityLikeStatus = (holder.getUser()==null) ? 0 :
+                                likeService.findEntityLikeStatus(holder.getUser().getId(), ENTITY_TYPE_COMMENT, reply.getId());
+                        replyVo.put("likeStatus",entityLikeStatus);
+
                         replyVo.put("target", target);
                         replyVoList.add(replyVo);
                     }
