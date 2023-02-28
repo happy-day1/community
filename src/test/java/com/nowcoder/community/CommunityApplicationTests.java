@@ -10,7 +10,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootTest
 @ContextConfiguration(classes = CommunityApplication.class)
@@ -28,6 +31,8 @@ class CommunityApplicationTests implements ApplicationContextAware {
 	void testBeanConfig() {
 		SimpleDateFormat bean = context.getBean(SimpleDateFormat.class);
 		System.out.println(bean.format(new Date()));
-	}
+		String s = "abc";
+		Map map = new HashMap();
 
+	}
 }

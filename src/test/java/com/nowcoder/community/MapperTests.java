@@ -59,13 +59,12 @@ public class MapperTests {
 
     @Test
     public void discussPostsTest() {
-        List<DiscussPost> discussPosts = postMapper.selectDiscussPosts(149, 0, 10);
+        List<DiscussPost> discussPosts = postMapper.selectDiscussPosts(149, 0, 10, 0);
         for (DiscussPost discussPost: discussPosts) {
             System.out.println(discussPost);
         }
         int rows = postMapper.selectDiscussPostRows(149);
         System.out.println(rows);
-        int a=  (int)Math.pow(2,3);
     }
 
     @Test
@@ -81,4 +80,5 @@ public class MapperTests {
         int i = userMapper.deleteUser(151);
         System.out.println(i);
     }
+
 }

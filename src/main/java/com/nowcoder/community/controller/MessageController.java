@@ -155,9 +155,10 @@ public class MessageController implements CommunityConstant {
         String[] modelNames = new String[] {"commentNotice", "likeNotice", "followNotice"};
 
         for (int i=0; i<topics.length; i++) {
-            Map<String, Object> messageVO = new HashMap<String, Object>();
+            Map<String, Object> messageVO = null;
             Message latestComment = messageService.findLatestNotice(user.getId(), topics[i]);
             if (latestComment!=null) {
+                messageVO = new HashMap<String, Object>();
                 messageVO.put("message", latestComment);
                 String content = HtmlUtils.htmlUnescape(latestComment.getContent());
                 HashMap<String, Object> data = JSONObject.parseObject(content, HashMap.class);

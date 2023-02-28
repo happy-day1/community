@@ -35,7 +35,8 @@ public class FollowController implements CommunityConstant{
     @Autowired
     private HostHolder holder;
 
-    @RequestMapping(value = "/follow", method = RequestMethod.POST)
+    // 关注某一个实体
+    @RequestMapping(path = "/follow", method = RequestMethod.POST)
     @ResponseBody
     public String follow(int entityType, int entityId) {
         User user = holder.getUser();
@@ -50,7 +51,8 @@ public class FollowController implements CommunityConstant{
         return CommunityUtil.getJSONString(0, "已关注");
     }
 
-    @RequestMapping(value = "/unfollow", method = RequestMethod.POST)
+    // 取消对某一个实体的关注
+    @RequestMapping(path = "/unfollow", method = RequestMethod.POST)
     @ResponseBody
     public String unfollow(int entityType, int entityId) {
         User user = holder.getUser();

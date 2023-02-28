@@ -10,6 +10,9 @@ public class RedisKeyUtil {
     private static final String PREFIX_CAPTCHA = "kaptcha";
     private static final String PREFIX_TICKET = "ticket";
     private static final String PREFIX_USER = "user";
+    private static final String PREFIX_UV = "uv";
+    private static final String PREFIX_DAU = "dau";
+    private static final String PREFIX_POST = "post";
 
     // 某个实体的赞
     // like:entity:entityType:entityId->Set(userId)
@@ -45,6 +48,30 @@ public class RedisKeyUtil {
 
     public static String getUserKey(int userId) {
         return PREFIX_USER+SPILT+userId;
+    }
+
+    // 单日UV
+    public static String getUVKey(String data) {
+        return PREFIX_UV+SPILT+data;
+    }
+
+    // 区间UV
+    public static String getUVKey(String startDate, String endDate) {
+        return PREFIX_UV+SPILT+startDate+SPILT+endDate;
+    }
+
+    // 单日活跃用户
+    public static String getDAUKey(String date) {
+        return PREFIX_DAU+SPILT+date;
+    }
+
+    // 区间活跃用户
+    public static String getDAUKey(String startDate, String endDate) {
+        return PREFIX_DAU+SPILT+startDate+SPILT+endDate;
+    }
+    // 返回统计帖子分数
+    public static String getPostScoreKey() {
+        return PREFIX_POST + SPILT + "score";
     }
 
 }
